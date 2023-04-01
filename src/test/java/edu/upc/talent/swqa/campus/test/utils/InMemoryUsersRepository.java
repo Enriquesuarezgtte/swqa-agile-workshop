@@ -9,14 +9,16 @@ public record InMemoryUsersRepository(UsersRepositoryState state) implements Use
 
   @Override
   public void createUser(
-        final String name,
-        final String surname,
-        final String email,
-        final String role,
-        final String groupName
-  ) {
+      final String name,
+      final String surname,
+      final String email,
+      final String role,
+      final String groupName) {
     final var id = state.users().size() + 1;
     final var user = new User("" + id, name, surname, email, role, groupName);
+    if (!state.groups().stream().anyMatch(group -> group.name().equals(groupName))) {
+      throw new IllegalArgumentException("Group " + groupName + " does not exist");
+    }
     state.users().add(user);
   }
 
@@ -29,14 +31,14 @@ public record InMemoryUsersRepository(UsersRepositoryState state) implements Use
   @Override
   public List<User> getUsersByGroupAndRole(final String groupName, final String onlyRole) {
     return state.users().stream()
-                .filter(user -> user.groupName().equals(groupName) && user.role().equals(onlyRole))
-                .toList();
+        .filter(user -> user.groupName().equals(groupName) && user.role().equals(onlyRole))
+        .toList();
   }
 
   @Override
   public List<User> getUsersByGroup(final String groupName) {
     return state.users().stream()
-                .filter(user -> user.groupName().equals(groupName))
-                .toList();
+        .filter(user -> user.groupName().equals(groupName))
+        .toList();
   }
 }

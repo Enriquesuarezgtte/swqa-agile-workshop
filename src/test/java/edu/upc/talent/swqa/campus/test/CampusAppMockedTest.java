@@ -16,10 +16,9 @@ import java.util.List;
 public final class CampusAppMockedTest {
 
   final List<User> initialUsers = List.of(
-        new User("1", "John", "Doe", "john.doe@example.com", "student", "swqa"),
-        new User("2", "Jane", "Doe", "jane.doe@example.com", "student", "swqa"),
-        new User("3", "Mariah", "Harris", "mariah.hairam@example.com", "teacher", "swqa")
-  );
+      new User("1", "John", "Doe", "john.doe@example.com", "student", "swqa"),
+      new User("2", "Jane", "Doe", "jane.doe@example.com", "student", "swqa"),
+      new User("3", "Mariah", "Harris", "mariah.hairam@example.com", "teacher", "swqa"));
 
   private CampusApp app;
   private EmailSender emailSender;
@@ -35,13 +34,27 @@ public final class CampusAppMockedTest {
   }
 
   @Test
-  public void testCreateGroup(){
+  public void testCreateUser() {
+    final var firstName = "Alice";
+    final var lastName = "Anderson";
+    final var email = "alice.anderson@example.com";
+    final var role = "student";
+    final var group = "swqa";
+
+    app.createUser(firstName, lastName, email, role, group);
+
+    verify(usersRepository).createUser(firstName, lastName, email, role, group);
+    verifyNoMoreInteractions(usersRepository);
+    verifyNoMoreInteractions(emailSender);
+  }
+
+  @Test
+  public void testCreateGroup() {
     app.createGroup("bigdata");
     verify(usersRepository).createGroup("bigdata");
     verifyNoMoreInteractions(usersRepository);
     verifyNoMoreInteractions(emailSender);
   }
-
 
   @Test
   public void testSendEmailToGroup() {
